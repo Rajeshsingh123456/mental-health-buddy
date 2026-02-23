@@ -1,0 +1,146 @@
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: 'Segoe UI', sans-serif; 
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #333; 
+      min-height: 100vh;
+      transition: background 0.3s;
+    }
+    body.dark-mode { 
+        background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); 
+        color: #f4f4f4; 
+    }
+.container {
+     max-width: 800px; 
+     margin: 0 auto;
+      padding: 20px; }
+ header { 
+      text-align: center;
+       padding: 20px 0;
+        color: white; 
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      position: relative;
+    }
+body.dark-mode header { 
+    color: #f4f4f4; 
+}
+.theme-toggle { 
+    position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.2);
+     border: none; padding: 10px; border-radius: 50%; 
+     cursor: pointer;
+     }
+.section {
+     background: rgba(255,255,255,0.95);
+      margin: 20px 0; padding: 20px; border-radius: 15px;
+       box-shadow: 0 5px 20px rgba(0,0,0,0.1); 
+    }
+ body.dark-mode .section {
+     background: rgba(52,73,94,0.95);
+     }
+h2 { 
+    text-align: center;
+     color: #667eea;
+      margin-bottom: 15px; }
+body.dark-mode h2 {
+     color: #a8e6cf; }
+.mood-emojis {
+     display: flex;
+      justify-content: space-around;
+       margin: 10px 0; 
+       flex-wrap: wrap; }
+.emoji-btn { font-size: 2rem; background: none; border: none; cursor: pointer; padding: 10px; border-radius: 50%; transition: transform 0.3s; margin: 5px; }
+.emoji-btn:hover, .emoji-btn.selected {
+     transform: scale(1.2);
+      background: #667eea;
+       color:white; }
+#notes {
+     width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd; 
+    border-radius: 5px; resize: vertical;
+     min-height: 80px; }
+body.dark-mode #notes {
+     background: #34495e;
+      border-color: #555;
+       color: #f4f4f4; }
+button { 
+    background: #667eea;
+     color: white; 
+     border: none;
+      padding: 10px 20px;
+       border-radius: 25px;
+       cursor: pointer;
+        transition: background 0.3s; margin: 5px; }
+button:hover { 
+    background: #5a67d8; }
+.chat-container { 
+    height: 300px; 
+    border: 1px solid #ddd;
+     border-radius: 10px; 
+     padding: 10px;
+      overflow-y: auto; 
+      background: #f9f9f9;
+       margin: 10px 0; }
+body.dark-mode .chat-container {
+     background: #34495e; 
+     border-color: #555; }
+.chat-message {
+     margin: 10px 0;
+      padding: 10px; 
+      border-radius: 10px; }
+.user-msg { background: #667eea;
+     color: white;
+      text-align: right; }
+.bot-msg { 
+    background: #e2e8f0;
+     color: #333; }
+body.dark-mode .bot-msg { 
+    background: #4a5568;
+     color: #f4f4f4; }
+#chatInput { 
+    width: 70%; 
+    padding: 10px;
+     border: 1px solid #ddd;
+      border-radius: 5px; }
+body.dark-mode #chatInput { 
+    background: #34495e;
+     border-color: #555;
+      color: #f4f4f4; }
+#chart-container { 
+    position: relative;
+     height: 300px; 
+     margin: 20px 0; }
+.streak {
+     text-align: center;
+      font-size: 1.2rem;
+       color: #4CAF50;
+        margin-top: 10px; }
+.resources {
+     display: flex;
+      flex-wrap: wrap;
+       gap: 10px;
+        justify-content: center; }
+.resource-link {
+     background: #4CAF50; 
+     color: white; 
+     padding: 10px;
+      border-radius: 10px;
+       text-decoration: none; }
+.resource-link:hover { 
+    background: #45a049; }
+#weatherInsight { 
+    text-align: center; 
+    font-style: italic; 
+    color: #666;
+     margin: 10px 0; }
+body.dark-mode #weatherInsight {
+     color: #ccc;
+     }
+    @media (max-width: 600px) { 
+      .container { padding: 10px; } 
+      .mood-emojis { justify-content: center; } 
+      .emoji-btn { font-size: 1.5rem; }
+      #chatInput { width: 60%; }
+    }
+ 
