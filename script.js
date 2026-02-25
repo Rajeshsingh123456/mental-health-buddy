@@ -1,18 +1,21 @@
 
-    let moods = JSON.parse(localStorage.getItem('moods')) || [];
-    let currentMood = null;
-    let currentStreak = parseInt(localStorage.getItem('streak')) || 0;
-    let chart = null;
+    let moods = JSON.parse(localStorage.getItem("moods")) || [];
+let currentMood = null;
+let currentStreak = parseInt(localStorage.getItem("streak")) || 0;
+let chart = null;
+
+document.getElementById("streak").textContent = currentStreak;
  
 
-    const BOT_RESPONSES = {
-      stressed: "Take deep breaths: Inhale 4s, hold 4s, exhale 4s. Try a 5-min walk! 🌳",
-      anxious: "Ground yourself: Name 5 things you see, 4 you touch, 3 you hear. You're safe. 🛡️",
-      sad: "It's okay to feel this. Journal or call a friend. Remember, this will pass. ☀️",
-      angry: "Count to 10. Punch a pillow or exercise to release energy. 💪",
-      happy: "That's awesome! Keep doing what makes you smile. Share the joy! 😄",
-      default: "I'm here for you. Share more about your feelings, or try logging your mood today."
-    };
+const BOT_RESPONSES = {
+  stressed: "Take a slow breath 🌿 Inhale 4s, hold 4s, exhale 4s. A short walk might help too.",
+  anxious: "Try grounding: 5 things you see, 4 you feel, 3 you hear. You are safe. 🛡️",
+  sad: "It's okay to feel sad. You are not alone. Maybe write your thoughts or call someone you trust. 💛",
+  angry: "Pause. Count to 10. Release energy through movement or deep breathing. 💪",
+  happy: "That's beautiful! Keep doing what brings you joy 😄",
+  neutral: "Neutral days are okay. Small wins matter 🌿",
+  default: "I'm here for you. Tell me more about how you're feeling."
+};
 
     const QUOTES = [
       "You are stronger than you think.",
@@ -25,111 +28,198 @@
 
     // Theme Toggle
     function toggleTheme() {
-      document.body.classList.toggle('dark-mode');
-      document.querySelector('.theme-toggle').textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
-    }
-
-    // Select Mood
-    function selectMood(emoji, value, btn) {
-      currentMood = { emoji, value, date: new Date().toLocaleDateString() };
-      document.querySelectorAll('.emoji-btn').forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected');
-      btn.style.transform = "scale(1.3)";
-setTimeout(() => {
-  btn.style.transform = "scale(1.2)";
-}, 150);
-    }
-
-    // Log Mood with AI Response
-    function logMood() {
-      if (!currentMood) { alert('Please select a mood first! 😊'); return; }
-         changeBackground(currentMood.value);
-      const notes = document.getElementById('notes').value.trim();
-      const moodEntry = { ...currentMood, notes, time: new Date().toLocaleTimeString() };
-      moods.push(moodEntry);
-      localStorage.setItem('moods', JSON.stringify(moods));
-
-      // Update streak
-const today = new Date().toLocaleDateString();
-const yesterday = new Date();
-yesterday.setDate(yesterday.getDate() - 1);
-const yesterdayStr = yesterday.toLocaleDateString();
-
-const lastMood = moods[moods.length - 2];
-
-if (lastMood && lastMood.date === yesterdayStr) {
-  currentStreak++;
-} else if (!lastMood || lastMood.date !== today) {
-  currentStreak = 1;
+  document.body.classList.toggle("dark-mode");
+  const btn = document.querySelector(".theme-toggle");
+  btn.textContent = document.body.classList.contains("dark-mode") ? "☀️" : "🌙";
 }
 
-localStorage.setItem('streak', currentStreak);
-document.getElementById('streak').textContent = currentStreak;
+    // Select Mood
+ function selectMood(emoji, value, btn) {
+  currentMood = {
+    emoji,
+    value,
+    date: new Date().toLocaleDateString(),
+    time: new Date().toLocaleTimeString()
+  };
 
+  document.querySelectorAll(".emoji-btn").forEach(b => b.classList.remove("selected"));
+  btn.classList.add("selected");
+
+  btn.style.transform = "scale(1.3)";
+  setTimeout(() => {
+    btn.style.transform = "scale(1.2)";
+  }, 150);
+}
+
+    // Log Mood with AI Response
+function logMood() {
+  if (!currentMood) {
+    alert("Please select a mood first 😊");
+    return;
+  }
+
+  const notes = document.getElementById("notes").value.trim();
+  const moodEntry = { ...currentMood, notes };
+
+  moods.push(moodEntry);
+  localStorage.setItem("moods", JSON.stringify(moods));
+
+  updateStreak();
+  changeBackground(currentMood.value);
+  triggerMoodAIResponse(currentMood.emoji);
+
+  document.getElementById("notes").value = "";
+  document.querySelectorAll(".emoji-btn").forEach(b => b.classList.remove("selected"));
+  currentMood = null;
+
+  renderChart();
+}
+      // Update streak
+function updateStreak() {
+  const today = new Date();
+  const yesterday = new Date();
+  yesterday.setDate(today.getDate() - 1);
+
+  const todayStr = today.toLocaleDateString();
+  const yesterdayStr = yesterday.toLocaleDateString();
+
+  if (moods.length === 1) {
+    currentStreak = 1;
+  } else {
+    const lastMood = moods[moods.length - 2];
+
+    if (lastMood.date === yesterdayStr) {
+      currentStreak++;
+    } else if (lastMood.date !== todayStr) {
+      currentStreak = 1;
+    }
+  }
+
+  localStorage.setItem("streak", currentStreak);
+  document.getElementById("streak").textContent = currentStreak;
+}
+
+  //background chnages
+ function changeBackground(value) {
+  if (value <= 2)
+    document.body.style.background = "linear-gradient(135deg,#ff9a9e,#fad0c4)";
+  else if (value === 3)
+    document.body.style.background = "linear-gradient(135deg,#a1c4fd,#c2e9fb)";
+  else
+    document.body.style.background = "linear-gradient(135deg,#84fab0,#8fd3f4)";
+}
 
     // Trigger AI Response based on Mood
-    function triggerMoodAIResponse(emoji) {
-      let response = BOT_RESPONSES.default;
-      switch (emoji) {
-        case '😢': response = BOT_RESPONSES.sad; break;
-        case '😟': response = BOT_RESPONSES.anxious; break;
-        case '😠': response = BOT_RESPONSES.angry; break;
-        case '😊': response = BOT_RESPONSES.happy; break;
-        case '😐': response = "Feeling neutral is okay! Reflect on small wins today. 🌿"; break;
-      }
-      setTimeout(() => addChatMessage('Buddy AI', response), 500);
-    }
+ function triggerMoodAIResponse(emoji) {
+  let response = BOT_RESPONSES.default;
+
+  switch (emoji) {
+    case "😢": response = BOT_RESPONSES.sad; break;
+    case "😟": response = BOT_RESPONSES.anxious; break;
+    case "😠": response = BOT_RESPONSES.angry; break;
+    case "😊": response = BOT_RESPONSES.happy; break;
+    case "😐": response = BOT_RESPONSES.neutral; break;
+  }
+
+  setTimeout(() => typeBotMessage(response), 600);
+}
 
     // Chat Functionality
-    function sendMessage() {
-      const input = document.getElementById('chatInput');
-      const msg = input.value.trim();
-      if (!msg) return;
+   function sendMessage() {
+  const input = document.getElementById("chatInput");
+  const msg = input.value.trim();
+  if (!msg) return;
 
-      addChatMessage('You', msg);
-      input.value = '';
+  addChatMessage("You", msg);
+  input.value = "";
+
+  const lower = msg.toLowerCase();
+
+   // Emergency detection
+  if (
+    lower.includes("suicide") ||
+    lower.includes("kill myself") ||
+    lower.includes("end my life")
+  ) {
+    alert("Please contact Vandrevala Helpline: 1860 266 2345. You are not alone.");
+  }
 
       // Basic AI response
-      let response = BOT_RESPONSES.default;
-      const lower = msg.toLowerCase();
-      if (lower.includes('stress') || lower.includes('tired')) response = BOT_RESPONSES.stressed;
-      else if (lower.includes('anxious') || lower.includes('worry')) response = BOT_RESPONSES.anxious;
-      else if (lower.includes('sad') || lower.includes('down')) response = BOT_RESPONSES.sad;
-      else if (lower.includes('angry') || lower.includes('mad')) response = BOT_RESPONSES.angry;
-      else if (lower.includes('happy') || lower.includes('good')) response = BOT_RESPONSES.happy;
+    let response = BOT_RESPONSES.default;
 
-      setTimeout(() => addChatMessage('Buddy AI', response), 800);
-    }
+  if (lower.includes("stress") || lower.includes("tired"))
+    response = BOT_RESPONSES.stressed;
+  else if (lower.includes("anxious") || lower.includes("worry"))
+    response = BOT_RESPONSES.anxious;
+  else if (lower.includes("sad") || lower.includes("down"))
+    response = BOT_RESPONSES.sad;
+  else if (lower.includes("angry") || lower.includes("mad"))
+    response = BOT_RESPONSES.angry;
+  else if (lower.includes("happy") || lower.includes("good"))
+    response = BOT_RESPONSES.happy;
 
-    function addChatMessage(sender, text) {
-      const container = document.getElementById('chatContainer');
-      const div = document.createElement('div');
-      div.className = `chat-message ${sender === 'You' ? 'user-msg' : 'bot-msg'}`;
-      div.innerHTML = `<strong>${sender}:</strong> ${text}`;
-      container.appendChild(div);
-      container.scrollTop = container.scrollHeight;
-    }
+  setTimeout(() => typeBotMessage(response), 800);
+}
+//add chat message
+ function addChatMessage(sender, text) {
+  const container = document.getElementById("chatContainer");
+  const div = document.createElement("div");
+  div.className = `chat-message ${sender === "You" ? "user-msg" : "bot-msg"}`;
+  div.innerHTML = `<strong>${sender}:</strong> ${text}`;
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+}
 
     // Render Mood Chart
-    function renderChart() {
-      const ctx = document.getElementById('moodChart').getContext('2d');
-      if (chart) chart.destroy();
-      if (moods.length === 0) {
-        ctx.font = '16px Arial';
-        ctx.fillStyle = '#666';
-        ctx.textAlign = 'center';
-        ctx.fillText('Log some moods to see trends!', ctx.canvas.width / 2, ctx.canvas.height / 2);
-        return;
-      }
-      const last7Days = moods.slice(-7).reverse();
-      const labels = last7Days.map(m => m.date);
-      const data = last7Days.map(m => m.value);
-      chart = new Chart(ctx, {
-        type: 'line',
-        data: { labels, datasets: [{ label: 'Mood Level (1-5)', data, borderColor: '#667eea', backgroundColor: 'rgba(102,126,234,0.2)', tension: 0.4, fill: true }] },
-        options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 5 } }, plugins: { legend: { display: true } } }
-      });
+  function renderChart() {
+  const ctx = document.getElementById("moodChart").getContext("2d");
+
+  if (chart) chart.destroy();
+  if (moods.length === 0) return;
+
+  const last7 = moods.slice(-7);
+  const labels = last7.map(m => m.date);
+  const data = last7.map(m => m.value);
+
+  chart = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels,
+      datasets: [{
+        label: "Mood Level",
+        data,
+        borderWidth: 3,
+        tension: 0.4,
+        fill: true
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: { y: { min: 0, max: 5 } }
     }
+  });
+}
+
+// typing effect
+function typeBotMessage(text) {
+  const container = document.getElementById("chatContainer");
+  const div = document.createElement("div");
+  div.className = "chat-message bot-msg";
+  div.innerHTML = "<strong>Buddy AI:</strong> ";
+  container.appendChild(div);
+
+  let i = 0;
+  const speed = 25;
+
+  const interval = setInterval(() => {
+    div.innerHTML = `<strong>Buddy AI:</strong> ${text.substring(0, i)}`;
+    i++;
+    container.scrollTop = container.scrollHeight;
+
+    if (i > text.length) clearInterval(interval);
+  }, speed);
+}
 
     // Weather placeholder
     function getWeatherInsight() {
@@ -138,34 +228,44 @@ document.getElementById('streak').textContent = currentStreak;
     }
 
     // Daily Quote
-    function newQuote() {
-      const quote = QUOTES[Math.floor(Math.random() * QUOTES.length)];
-      document.getElementById('dailyQuote').textContent = quote;
-    }
+  function newQuote() {
+  const quote = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+  document.getElementById("dailyQuote").textContent = quote;
+}
+
 
     // PDF Export
-    async function exportJournal() {
-      const container = document.querySelector('.container');
-      const canvas = await html2canvas(container);
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jspdf.jsPDF('p', 'mm', 'a4');
-      const imgProps = pdf.getImageProperties(imgData);
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-      pdf.save('MentalHealthJournal.pdf');
+   
+function exportJournal() {
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF();
+
+  pdf.setFontSize(16);
+  pdf.text("Mental Health Journal", 20, 20);
+
+  let y = 30;
+  moods.forEach((m, index) => {
+    pdf.setFontSize(12);
+    pdf.text(
+      `${index + 1}. ${m.date} (${m.time}) - Mood: ${m.emoji}`,
+      20,
+      y
+    );
+    y += 8;
+
+    if (m.notes) {
+      pdf.text(`Notes: ${m.notes}`, 25, y);
+      y += 10;
     }
 
-    // Initialize
-    document.getElementById('streak').textContent = currentStreak;
-    renderChart();
-function changeBackground(value) {
-  const body = document.body;
-  //background chnages
-  if (value <= 2)
-    body.style.background = "linear-gradient(135deg,#ff9a9e,#fad0c4)";
-  else if (value == 3)
-    body.style.background = "linear-gradient(135deg,#a1c4fd,#c2e9fb)";
-  else
-    body.style.background = "linear-gradient(135deg,#84fab0,#8fd3f4)";
+    if (y > 270) {
+      pdf.addPage();
+      y = 20;
+    }
+  });
+
+  pdf.save("MentalHealthJournal.pdf");
 }
+
+    // Initialize
+ renderChart();
