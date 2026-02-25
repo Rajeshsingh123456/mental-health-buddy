@@ -34,32 +34,38 @@
       currentMood = { emoji, value, date: new Date().toLocaleDateString() };
       document.querySelectorAll('.emoji-btn').forEach(b => b.classList.remove('selected'));
       btn.classList.add('selected');
+      btn.style.transform = "scale(1.3)";
+setTimeout(() => {
+  btn.style.transform = "scale(1.2)";
+}, 150);
     }
 
     // Log Mood with AI Response
     function logMood() {
       if (!currentMood) { alert('Please select a mood first! 😊'); return; }
-
+         changeBackground(currentMood.value);
       const notes = document.getElementById('notes').value.trim();
       const moodEntry = { ...currentMood, notes, time: new Date().toLocaleTimeString() };
       moods.push(moodEntry);
       localStorage.setItem('moods', JSON.stringify(moods));
 
       // Update streak
-      const today = new Date().toLocaleDateString();
-      const lastMood = moods[moods.length - 2];
-      if (!lastMood || lastMood.date !== today) { currentStreak++; localStorage.setItem('streak', currentStreak); }
-      document.getElementById('streak').textContent = currentStreak;
+const today = new Date().toLocaleDateString();
+const yesterday = new Date();
+yesterday.setDate(yesterday.getDate() - 1);
+const yesterdayStr = yesterday.toLocaleDateString();
 
-      alert(`Mood logged successfully! Your streak is now ${currentStreak} days. 🏆`);
-      document.getElementById('notes').value = '';
-      document.querySelectorAll('.emoji-btn').forEach(b => b.classList.remove('selected'));
+const lastMood = moods[moods.length - 2];
 
-      renderChart();
-      getWeatherInsight();
-      triggerMoodAIResponse(currentMood.emoji);
-      currentMood = null;
-    }
+if (lastMood && lastMood.date === yesterdayStr) {
+  currentStreak++;
+} else if (!lastMood || lastMood.date !== today) {
+  currentStreak = 1;
+}
+
+localStorage.setItem('streak', currentStreak);
+document.getElementById('streak').textContent = currentStreak;
+
 
     // Trigger AI Response based on Mood
     function triggerMoodAIResponse(emoji) {
@@ -153,3 +159,13 @@
     // Initialize
     document.getElementById('streak').textContent = currentStreak;
     renderChart();
+function changeBackground(value) {
+  const body = document.body;
+  //background chnages
+  if (value <= 2)
+    body.style.background = "linear-gradient(135deg,#ff9a9e,#fad0c4)";
+  else if (value == 3)
+    body.style.background = "linear-gradient(135deg,#a1c4fd,#c2e9fb)";
+  else
+    body.style.background = "linear-gradient(135deg,#84fab0,#8fd3f4)";
+}
