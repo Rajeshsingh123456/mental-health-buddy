@@ -48,9 +48,31 @@
       <div id="chart-container">
         <canvas id="moodChart"></canvas>
       </div>
+      <div class="section">
+  <h2>🏆 Achievements</h2>
+  <div id="badges"></div>
+</div>
+      <button onclick="generateWeeklySummary()">Generate Weekly Summary</button>
+<p id="weeklySummary" style="margin-top:10px;"></p>
       <p id="weatherInsight"></p>
       <button onclick="exportJournal()">Export Journal (PDF)</button>
     </div>
+    
+<!-- Breathing Section -->
+    <div class="section">
+  <h2>🧘 Guided Breathing Exercise</h2>
+  <p style="text-align:center;">Follow the circle. Inhale... Hold... Exhale...</p>
+  
+  <div class="breathing-container">
+    <div class="breathing-circle" id="breathingCircle"></div>
+  </div>
+
+  <div style="text-align:center;">
+    <button onclick="startBreathing()">Start Breathing</button>
+  </div>
+
+  <p id="breathingText" style="text-align:center; margin-top:10px; font-weight:bold;"></p>
+</div>
 
     <!-- Resources Section -->
     <div class="section">
@@ -67,6 +89,8 @@
       </div>
     </div>
   </div>
+
+
  <script src="script.js"></script>
 </body>
 </html>

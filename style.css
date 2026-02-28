@@ -275,3 +275,42 @@ body.dark-mode #weatherInsight {
     max-width: 90%;
   }
 }
+
+#badges {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.badge {
+  padding: 15px 20px;
+  border-radius: 15px;
+  font-weight: bold;
+  color: white;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.bronze { background: #cd7f32; }
+.silver { background: #c0c0c0; color: black; }
+.gold { background: #ffd700; color: black; }
+
+/* Breathing Section */
+.breathing-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.breathing-circle {
+  width: 120px;
+  height: 120px;
+  background: linear-gradient(135deg,#667eea,#5a67d8);
+  border-radius: 50%;
+  transition: transform 4s ease-in-out;
+  box-shadow: 0 0 30px rgba(102,126,234,0.6);
+}
+
+.breathing-circle.active {
+  transform: scale(1.6);
+}

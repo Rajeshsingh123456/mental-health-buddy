@@ -269,3 +269,86 @@ function exportJournal() {
 
     // Initialize
  renderChart();
+checkAchievements();
+
+
+function checkAchievements() {
+  const badgeContainer = document.getElementById("badges");
+  badgeContainer.innerHTML = "";
+
+  if (currentStreak >= 3) {
+    badgeContainer.innerHTML += `<div class="badge bronze">🥉 3 Day Streak</div>`;
+  }
+
+  if (currentStreak >= 7) {
+    badgeContainer.innerHTML += `<div class="badge silver">🥈 7 Day Streak</div>`;
+  }
+
+  if (currentStreak >= 30) {
+    badgeContainer.innerHTML += `<div class="badge gold">🥇 30 Day Streak</div>`;
+  }
+}
+
+function generateWeeklySummary() {
+  if (moods.length < 3) {
+    document.getElementById("weeklySummary").innerText =
+      "Log more moods to generate weekly insights.";
+    return;
+  }
+
+  const last7 = moods.slice(-7);
+
+  let happy = 0, sad = 0, anxious = 0;
+
+  last7.forEach(m => {
+    if (m.value >= 4) happy++;
+    if (m.value <= 2) sad++;
+    if (m.value === 2) anxious++;
+  });
+
+  let summary = `This week:\n`;
+  summary += `😊 Happy days: ${happy}\n`;
+  summary += `😢 Low mood days: ${sad}\n`;
+  summary += `😟 Anxious days: ${anxious}\n`;
+
+  if (happy > sad)
+    summary += "Overall, your mood improved this week! 🌟";
+  else
+    summary += "Consider adding more self-care activities next week 💛";
+
+  document.getElementById("weeklySummary").innerText = summary;
+}
+
+function startBreathing() {
+  const circle = document.getElementById("breathingCircle");
+  const text = document.getElementById("breathingText");
+
+  let cycle = 0;
+
+  function breathingCycle() {
+    if (cycle >= 3) {
+      text.innerText = "Well done! You completed the breathing exercise 🌿";
+      circle.classList.remove("active");
+      return;
+    }
+
+    text.innerText = "Inhale...";
+    circle.classList.add("active");
+
+    setTimeout(() => {
+      text.innerText = "Hold...";
+    }, 4000);
+
+    setTimeout(() => {
+      text.innerText = "Exhale...";
+      circle.classList.remove("active");
+    }, 7000);
+
+    setTimeout(() => {
+      cycle++;
+      breathingCycle();
+    }, 11000);
+  }
+
+  breathingCycle();
+}
